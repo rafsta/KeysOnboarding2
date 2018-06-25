@@ -1,0 +1,192 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+<h2>Index</h2>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
+        onclick="clearTextBox();">
+    Add New Product
+</button><br /><br />
+
+
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Price
+        </th>
+    </tr>
+</table>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dissmiss="modal"><span aria-hidden="true">×</span></button>*@
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Product</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="ProductID">ID</label>
+                        <input type="text" class="form-control" id="ProductID" placeholder="Id" disabled="disabled" />
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="Name">Name</label>
+
+                        <input type="text" class="form-control" id="Name" placeholder="Name" />
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="Price">Price</label>
+
+                        <input type="text" class="form-control" id="Price" placeholder="Price" />
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Update</button>
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Edit Modal HTML -->
+<div id="editProductModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Product</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <textarea class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="submit" class="btn btn-info" value="Save">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type=”type/javascript”>
+        $(document).ready(function () {
+            loadData();
+        });
+
+        //Load Data function
+        function loadData() {
+        $.ajax({
+        url: "/Home/Product",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+        var html = '';
+        $.each(result, function (key, item) {
+        html += '<tr>';
+        html += '<td>' + item.Name + '</td>';
+        html += '<td>' + item.Price + '</td>';
+        html += '<td><a href="#" onclick="return getbyID(' + item.ID + ')">Edit</a> | <a href="#" onclick="Delele(' + item.ID + ')">Delete</a></td>';
+        html += '</tr>';
+        });
+        $('.tbody').html(html);
+        },
+
+        error: function (errormessage) {
+        alert(errormessage.responseText);
+        }
+        });
+
+        function Add(){
+        $.ajax({
+        url: "/Products/Add",
+        data:JSON.stringify(empObj),
+        type:"POST",
+        contentType:"application/json;charset=utf-8",
+        dataType:"json",
+        success:function(result){
+        loadData();
+        $('#myModal').modal('hide');}
+        },
+        )};
+
+        //function for updating employee's record
+
+    function Update() {
+        var Product = {
+            ID: $('#ID').val(),
+            Name: $('#Name').val(),
+            Price: $('#Price').val(),
+        };
+        $.ajax({
+            url: "/Home/Update",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                loadData();
+                $('#myModal').modal('hide');
+                $('#EmployeeID').val("");
+                $('#Name').val("");
+                $('#Price').val("");},
+        });
+    }
+
+    //function for deleting employee's record
+
+    function Delele(ID) {
+        var ans = confirm("Are you sure you want to delete this Record?");
+        if (ans) {
+            $.ajax({
+                url: "/Home/Delete/" + ID,
+                type: "POST",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    loadData();
+                },
+
+            });
+
+        }
+
+    }
+</script>

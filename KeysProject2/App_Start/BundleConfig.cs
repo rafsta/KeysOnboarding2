@@ -24,6 +24,7 @@ namespace KeysProject2
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/DataTables/select.bootstrap4.css",
                       "~/Content/site.css"));
         }
     }
