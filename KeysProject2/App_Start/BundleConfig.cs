@@ -9,6 +9,8 @@ namespace KeysProject2
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                        "~/Scripts/bootstrap.js",
+                        "~/Scripts/DataTables/DataTables.bootstrap4.js",
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -24,7 +26,7 @@ namespace KeysProject2
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/DataTables/select.bootstrap4.css",
+                      "~/Content/DataTables/css/dataTables.bootstrap4.css",
                       "~/Content/site.css"));
         }
     }
