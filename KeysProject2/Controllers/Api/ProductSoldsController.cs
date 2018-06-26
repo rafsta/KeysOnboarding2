@@ -12,44 +12,44 @@ using KeysProject2.Models;
 
 namespace KeysProject2.Controllers.Api
 {
-    public class ProductsController : ApiController
+    public class ProductSoldsController : ApiController
     {
         private MVC2Entities db = new MVC2Entities();
 
-        // GET: api/Products
-        public IQueryable<Product> GetProducts()
+        // GET: api/ProductSolds
+        public IQueryable<ProductSold> GetProductSolds()
         {
-            return db.Products;
+            return db.ProductSolds;
         }
 
-        // GET: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult GetProduct(int id)
+        // GET: api/ProductSolds/5
+        [ResponseType(typeof(ProductSold))]
+        public IHttpActionResult GetProductSold(int id)
         {
-            Product product = db.Products.Find(id);
-            if (product == null)
+            ProductSold productSold = db.ProductSolds.Find(id);
+            if (productSold == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(productSold);
         }
 
-        // PUT: api/Products/5
+        // PUT: api/ProductSolds/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutProduct(int id, Product product)
+        public IHttpActionResult PutProductSold(int id, ProductSold productSold)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != product.Id)
+            if (id != productSold.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(product).State = EntityState.Modified;
+            db.Entry(productSold).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +57,7 @@ namespace KeysProject2.Controllers.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!ProductSoldExists(id))
                 {
                     return NotFound();
                 }
@@ -70,35 +70,35 @@ namespace KeysProject2.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Products
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult PostProduct(Product product)
+        // POST: api/ProductSolds
+        [ResponseType(typeof(ProductSold))]
+        public IHttpActionResult PostProductSold(ProductSold productSold)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Products.Add(product);
+            db.ProductSolds.Add(productSold);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = product.Id }, product);
+            return CreatedAtRoute("DefaultApi", new { id = productSold.Id }, productSold);
         }
 
-        // DELETE: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult DeleteProduct(int id)
+        // DELETE: api/ProductSolds/5
+        [ResponseType(typeof(ProductSold))]
+        public IHttpActionResult DeleteProductSold(int id)
         {
-            Product product = db.Products.Find(id);
-            if (product == null)
+            ProductSold productSold = db.ProductSolds.Find(id);
+            if (productSold == null)
             {
                 return NotFound();
             }
 
-            db.Products.Remove(product);
+            db.ProductSolds.Remove(productSold);
             db.SaveChanges();
 
-            return Ok(product);
+            return Ok(productSold);
         }
 
         protected override void Dispose(bool disposing)
@@ -110,9 +110,9 @@ namespace KeysProject2.Controllers.Api
             base.Dispose(disposing);
         }
 
-        private bool ProductExists(int id)
+        private bool ProductSoldExists(int id)
         {
-            return db.Products.Count(e => e.Id == id) > 0;
+            return db.ProductSolds.Count(e => e.Id == id) > 0;
         }
     }
 }

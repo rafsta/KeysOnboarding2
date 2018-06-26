@@ -12,44 +12,44 @@ using KeysProject2.Models;
 
 namespace KeysProject2.Controllers.Api
 {
-    public class ProductsController : ApiController
+    public class CustomersController : ApiController
     {
         private MVC2Entities db = new MVC2Entities();
 
-        // GET: api/Products
-        public IQueryable<Product> GetProducts()
+        // GET: api/Customers
+        public IQueryable<Customer> GetCustomers()
         {
-            return db.Products;
+            return db.Customers;
         }
 
-        // GET: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult GetProduct(int id)
+        // GET: api/Customers/5
+        [ResponseType(typeof(Customer))]
+        public IHttpActionResult GetCustomer(int id)
         {
-            Product product = db.Products.Find(id);
-            if (product == null)
+            Customer customer = db.Customers.Find(id);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(customer);
         }
 
-        // PUT: api/Products/5
+        // PUT: api/Customers/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutProduct(int id, Product product)
+        public IHttpActionResult PutCustomer(int id, Customer customer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != product.Id)
+            if (id != customer.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(product).State = EntityState.Modified;
+            db.Entry(customer).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +57,7 @@ namespace KeysProject2.Controllers.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!CustomerExists(id))
                 {
                     return NotFound();
                 }
@@ -70,35 +70,35 @@ namespace KeysProject2.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Products
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult PostProduct(Product product)
+        // POST: api/Customers
+        [ResponseType(typeof(Customer))]
+        public IHttpActionResult PostCustomer(Customer customer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Products.Add(product);
+            db.Customers.Add(customer);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = product.Id }, product);
+            return CreatedAtRoute("DefaultApi", new { id = customer.Id }, customer);
         }
 
-        // DELETE: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult DeleteProduct(int id)
+        // DELETE: api/Customers/5
+        [ResponseType(typeof(Customer))]
+        public IHttpActionResult DeleteCustomer(int id)
         {
-            Product product = db.Products.Find(id);
-            if (product == null)
+            Customer customer = db.Customers.Find(id);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            db.Products.Remove(product);
+            db.Customers.Remove(customer);
             db.SaveChanges();
 
-            return Ok(product);
+            return Ok(customer);
         }
 
         protected override void Dispose(bool disposing)
@@ -110,9 +110,9 @@ namespace KeysProject2.Controllers.Api
             base.Dispose(disposing);
         }
 
-        private bool ProductExists(int id)
+        private bool CustomerExists(int id)
         {
-            return db.Products.Count(e => e.Id == id) > 0;
+            return db.Customers.Count(e => e.Id == id) > 0;
         }
     }
 }

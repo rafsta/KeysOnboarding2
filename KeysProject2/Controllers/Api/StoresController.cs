@@ -12,44 +12,44 @@ using KeysProject2.Models;
 
 namespace KeysProject2.Controllers.Api
 {
-    public class ProductsController : ApiController
+    public class StoresController : ApiController
     {
         private MVC2Entities db = new MVC2Entities();
 
-        // GET: api/Products
-        public IQueryable<Product> GetProducts()
+        // GET: api/Stores
+        public IQueryable<Store> GetStores()
         {
-            return db.Products;
+            return db.Stores;
         }
 
-        // GET: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult GetProduct(int id)
+        // GET: api/Stores/5
+        [ResponseType(typeof(Store))]
+        public IHttpActionResult GetStore(int id)
         {
-            Product product = db.Products.Find(id);
-            if (product == null)
+            Store store = db.Stores.Find(id);
+            if (store == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(store);
         }
 
-        // PUT: api/Products/5
+        // PUT: api/Stores/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutProduct(int id, Product product)
+        public IHttpActionResult PutStore(int id, Store store)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != product.Id)
+            if (id != store.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(product).State = EntityState.Modified;
+            db.Entry(store).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +57,7 @@ namespace KeysProject2.Controllers.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!StoreExists(id))
                 {
                     return NotFound();
                 }
@@ -70,35 +70,35 @@ namespace KeysProject2.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Products
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult PostProduct(Product product)
+        // POST: api/Stores
+        [ResponseType(typeof(Store))]
+        public IHttpActionResult PostStore(Store store)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Products.Add(product);
+            db.Stores.Add(store);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = product.Id }, product);
+            return CreatedAtRoute("DefaultApi", new { id = store.Id }, store);
         }
 
-        // DELETE: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult DeleteProduct(int id)
+        // DELETE: api/Stores/5
+        [ResponseType(typeof(Store))]
+        public IHttpActionResult DeleteStore(int id)
         {
-            Product product = db.Products.Find(id);
-            if (product == null)
+            Store store = db.Stores.Find(id);
+            if (store == null)
             {
                 return NotFound();
             }
 
-            db.Products.Remove(product);
+            db.Stores.Remove(store);
             db.SaveChanges();
 
-            return Ok(product);
+            return Ok(store);
         }
 
         protected override void Dispose(bool disposing)
@@ -110,9 +110,9 @@ namespace KeysProject2.Controllers.Api
             base.Dispose(disposing);
         }
 
-        private bool ProductExists(int id)
+        private bool StoreExists(int id)
         {
-            return db.Products.Count(e => e.Id == id) > 0;
+            return db.Stores.Count(e => e.Id == id) > 0;
         }
     }
 }
