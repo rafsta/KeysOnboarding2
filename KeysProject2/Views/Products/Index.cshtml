@@ -2,6 +2,7 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@model IEnumerable<KeysProject2.Models.Product>
 
 <h2>Products</h2>
 
@@ -10,17 +11,22 @@
     Add New Product
 </button><br /><br />
 
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Products</h3>
+    </div>
+    <div class="panel-body">
+        <table id="ProductsTable" class="table table-striped table-bordered table-hover responsive" width="100%">
+            <thead class="thin-border-bottom">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
 
-<table class="table">
-    <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Price
-        </th>
-    </tr>
-</table>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -102,88 +108,147 @@
     </div>
 </div>
 
-<script>
-        $(document).ready(function () {
-            loadData();
-        });
+@section scripts{
+    <script>
 
-        //Load Data function
-        function loadData() {
+    //If WebAPI works, call Bind method
+    var BindAll = function () {
         $.ajax({
-        url: "/Home/Product",
-        type: "GET",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        success: function (result) {
-        var html = '';
-        $.each(result, function (key, item) {
-        html += '<tr>';
-        html += '<td>' + item.Name + '</td>';
-        html += '<td>' + item.Price + '</td>';
-        html += '<td><a href="#" onclick="return getbyID(' + item.ID + ')">Edit</a> | <a href="#" onclick="Delele(' + item.ID + ')">Delete</a></td>';
-        html += '</tr>';
-        });
-        $('.tbody').html(html);
-        },
+            url: "/api/Product/",
+            type: "GET",
+            success: function (data) {
+                alert(data);
+                for (var iCount = 0; iCount < data.length; iCount++) {
+                    var id = "btnDelete" + iCount;
+                    Bind(iCount, data);
+                    BindMethods(iCount);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert(error);
+            }
+        })
+    };
 
-        error: function (errormessage) {
-        alert(errormessage.responseText);
-        }
-        });
+    //Add row for values from bind
+    function Bind(iCount, data)
+    {
+        $('#ProductsTable tr:last').after('<tr><td><input type="text" id="txtName' + data[iCount].Id + '" value="' + data[iCount].Name + '"/></td><td><input type="text" id="txtPrice' + data[iCount].Id + '" value="' + data[iCount].Price + '"/></td><td><input type="text" id="txtId' + data[iCount].Id + '" value="' + data[iCount].Id + '"/></td><td><input id=btnDelete' + iCount + ' data-id="' + data[iCount].Id + '" type="button" value="delete" /></td><td><input id=btnUpdate' + iCount + ' data-id="' + data[iCount].Id + '" type="button" value="Update" /> <td></tr>');
 
-        function Add(){
-        $.ajax({
-        url: "/Products/Add",
-        data:JSON.stringify(empObj),
-        type:"POST",
-        contentType:"application/json;charset=utf-8",
-        dataType:"json",
-        success:function(result){
+    }
+
+    (function ($) {
+        var generateProductTable = $("#ProductsTable")
+            .dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "/api/products"
+                },
+                "columns": [
+                    { "data": "Name" }, { "data": "Price" }, 
+                ],
+                "language": {
+                    "emptyTable": "There are no products at present.",
+                    "zeroRecords": "There were no matching products found."
+                },
+                "searching": false,
+                "ordering": true,
+                "paging": true
+            });
+    })(jQuery);
+
+    $(document).ready(function () {
         loadData();
-        $('#myModal').modal('hide');}
-        },
-        )};
+    });
 
-        //function for updating employee's record
-
-    function Update() {
-        var Product = {
-            ID: $('#ID').val(),
-            Name: $('#Name').val(),
-            Price: $('#Price').val(),
-        };
+    //Load Data function
+    function loadData() {
         $.ajax({
-            url: "/Home/Update",
-            data: JSON.stringify(empObj),
-            type: "POST",
+            url: "/Api/Products",
+            type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                loadData();
-                $('#myModal').modal('hide');
-                $('#EmployeeID').val("");
-                $('#Name').val("");
-                $('#Price').val("");},
+                var html = '';
+                $.each(result,
+                    function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.Name + '</td>';
+                        html += '<td>' + item.Price + '</td>';
+                        html += '<td><a href="#" onclick="return getbyID(' +
+                            item.ID +
+                            ')">Edit</a> | <a href="#" onclick="Delele(' +
+                            item.ID +
+                            ')">Delete</a></td>';
+                        html += '</tr>';
+                    });
+                $('.tbody').html(html);
+            },
+
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
         });
-    }
 
-    //function for deleting employee's record
-
-    function Delele(ID) {
-        var ans = confirm("Are you sure you want to delete this Record?");
-        if (ans) {
+        function Add() {
             $.ajax({
-                url: "/Home/Delete/" + ID,
+                    url: "/Products/Add",
+                    data: JSON.stringify(empObj),
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        loadData();
+                        $('#myModal').modal('hide');
+                    }
+                }
+            )
+        };
+
+        //function for updating employee's record
+
+        function Update() {
+            var Product = {
+                ID: $('#ID').val(),
+                Name: $('#Name').val(),
+                Price: $('#Price').val(),
+            };
+            $.ajax({
+                url: "/Home/Update",
+                data: JSON.stringify(empObj),
                 type: "POST",
-                contentType: "application/json;charset=UTF-8",
+                contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (result) {
                     loadData();
+                    $('#myModal').modal('hide');
+                    $('#EmployeeID').val("");
+                    $('#Name').val("");
+                    $('#Price').val("");
                 },
-
             });
-
         }
 
-    }
-</script>
+        //function for deleting employee's record
+
+        function Delele(ID) {
+            var ans = confirm("Are you sure you want to delete this Record?");
+            if (ans) {
+                $.ajax({
+                    url: "/Home/Delete/" + ID,
+                    type: "POST",
+                    contentType: "application/json;charset=UTF-8",
+                    dataType: "json",
+                    success: function (result) {
+                        loadData();
+                    },
+
+                });
+
+            }
+
+        }
+        </script>
+    @Scripts.Render("~/bundles/jquery")
+}

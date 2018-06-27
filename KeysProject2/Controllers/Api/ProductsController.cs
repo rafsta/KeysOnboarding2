@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using KeysProject2.Models;
@@ -14,12 +15,16 @@ namespace KeysProject2.Controllers.Api
 {
     public class ProductsController : ApiController
     {
-        private MVC2Entities db = new MVC2Entities();
+        private MVC2Entities db;
+        public ProductsController()
+        { 
+            db = new MVC2Entities();
+        }
 
         // GET: api/Products
-        public IQueryable<Product> GetProducts()
+        public IEnumerable<Product> GetProducts()
         {
-            return db.Products;
+            return db.Products.ToList();
         }
 
         // GET: api/Products/5
