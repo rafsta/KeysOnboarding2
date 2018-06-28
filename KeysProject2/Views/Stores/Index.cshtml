@@ -6,51 +6,53 @@
 
 <h2>Index</h2>
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newStoreModal">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#storeModal">
     Add Store
-</button>
+</button><br /><br />
 
-<table id="stores" class="table table-light table-hover">
+<table class="table table-light table-hover" id="storestable">
     <thead>
         <tr>
             <th>Store Name</th>
             <th>Address</th>
+            <th>Action(Edit)</th>
+            <th>Action(Delete</th>
         </tr>
     </thead>
     <tbody></tbody>
 </table>
 
-<!-- Add new Store modal -->
-<div class="modal fade" id="newStoreModal" tabindex="-1" role="dialog" aria-labelledby="newStoreModalLabel" aria-hidden="true">
+@*Add Store modal*@
+<div class="modal fade" id="storeModal" tabindex="-1" role="dialog" aria-labelledby="storeModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newStoreModalLabel">Add New Store</h5>
+                <h5 class="modal-title" id="storeModalLabel">Add New Store</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="newStoreForm">
+                <form id="storeForm">
                     <div class="form-group">
-                        <label for="NewStoreName">Name</label>
-                        <input type="text" class="form-control" id="newStoreName" placeholder="Please Enter Store Name">
+                        <label for="storeName">Name</label>
+                        <input type="text" class="form-control" id="storeName" placeholder="Please Enter Store Name">
                     </div>
                     <div class="form-group">
-                        <label for="newStoreAddress">Address</label>
-                        <input type="text" class="form-control" id="newStoreAddress" placeholder="Please Enter Store Address">
+                        <label for="storeAddress">Address</label>
+                        <input type="text" class="form-control" id="storeAddress" placeholder="Please Enter Store Address">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="newStoreSubmit">Save</button>
+                <button type="button" class="btn btn-primary" id="storeSubmit">Save</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Edit Store Modal -->
+@*Edit Store Modal*@
 <div class="modal fade" id="editStoreModal" tabindex="-1" role="dialog" aria-labelledby="editStoreModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -81,7 +83,7 @@
     </div>
 </div>
 
-<!-- Delete Store Confirmation Modal -->
+@*Delete Store Modal*@
 <div class="modal fade" id="deleteStoreModal" tabindex="-1" role="dialog" aria-labelledby="deleteStoreModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -102,120 +104,131 @@
     </div>
 </div>
 
-<script>
-    //Add dataTable
-    $(document).ready(function () {
-        $("#stores").DataTable({
-            ajax: {
-                url: "api/Stores",
-                dataSrc: ""
-            },
-            columns: [
-                {
-                    data: "name"
+@section scripts
+{
+    <script>
+        //Add dataTable
+        $(document).ready(function () {
+            $("#storestable").DataTable({
+                ajax: {
+                    url: "api/Stores",
+                    dataSrc: ""
                 },
-                {
-                    data: "address"
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return "<button class = 'btn btn-warning' id='editStoreBtn' edit-Store-id=" + data + ">Edit</button>";
+                columns: [
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "address"
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class = 'btn btn-warning' id='editStoreBtn' edit-Store-id=" +
+                                data +
+                                ">Edit</button>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class = 'btn btn-danger' id='deleteStoreBtn' delete-Store-id=" +
+                                data +
+                                ">Delete</button>";
+                        }
                     }
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return "<button class = 'btn btn-danger' id='deleteStoreBtn' delete-Store-id=" + data + ">Delete</button>";
-                    }
-                }
-            ]
-        });
-
-        //Add new Store
-        $("#newStoreSubmit").click(function () {
-
-            var formdata = {
-                "name": $("#newStoreName").val(),
-                "address": $("#newStoreAddress").val()
-            };
-
-            $.ajax({
-                url: "api/stores",
-                method: "POST",
-                data: JSON.stringify(formdata),
-                contentType: "application/json;charset=utf-8",
-                processData: true,
-                success: function () {
-                    $("#newStoreModal").modal("hide");
-                    location.reload(true);
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                }
+                ]
             });
-        });
 
-        //Delete Store
-        $("#stores").on("click", "#deleteStoreBtn", function () {
+            //Add new Store
+            $("#storeSubmit").click(function () {
 
-            var StoreId = $(this).attr("delete-Store-id");
-
-            $("#deleteStoreModal").modal("show");
-
-            $("#deleteStoreSubmit").click(function () {
+                var formdata = {
+                    "name": $("#storeName").val(),
+                    "address": $("#storeAddress").val()
+                };
 
                 $.ajax({
-                    url: "/api/stores/" + StoreId,
-                    method: "DELETE",
+                    url: "api/stores",
+                    method: "POST",
+                    data: JSON.stringify(formdata),
+                    contentType: "application/json;charset=utf-8",
+                    processData: true,
                     success: function () {
-                        $("#deleteStoreModal").modal("hide");
+                        $("#storeModal").modal("hide");
                         location.reload(true);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
                     }
                 });
             });
-        });
 
-        //Edit Store
-        $("#stores").on("click", "#editStoreBtn", function () {
-            var StoreId = $(this).attr("edit-Store-id");
+            //Delete Store
+            $("#stores").on("click",
+                "#deleteStoreBtn",
+                function () {
 
-            $("#editStoreModal").modal("show");
+                    var StoreId = $(this).attr("delete-Store-id");
 
-            $.ajax({
-                url: "api/stores/" + StoreId,
-                method: "GET",
-                success: function (data) {
+                    $("#deleteStoreModal").modal("show");
 
-                    var storeData = JSON.parse(JSON.stringify(data));
-                    $("#StoreName").attr("placeholder", storeData.name);
-                    $("#StoreAddress").attr("placeholder", storeData.address);
+                    $("#deleteStoreSubmit").click(function () {
 
-                    $("#editStoreSubmit").click(function () {
-                        var formdata = {
-                            "name": $("#StoreName").val(),
-                            "address": $("#StoreAddress").val()
-                        };
                         $.ajax({
                             url: "/api/stores/" + StoreId,
-                            method: "PUT",
-                            data: JSON.stringify(formdata),
-                            contentType: "application/json;charset=utf-8",
-                            processData: true,
+                            method: "DELETE",
                             success: function () {
-                                $("#editStoreModal").modal("hide");
+                                $("#deleteStoreModal").modal("hide");
                                 location.reload(true);
-                            },
-                            error: function (xhr) {
-                                alert(xhr.responseText);
                             }
                         });
                     });
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                }
-            });
+                });
+
+            //Edit Store
+            $("#stores").on("click",
+                "#editStoreBtn",
+                function () {
+                    var StoreId = $(this).attr("edit-Store-id");
+
+                    $("#editStoreModal").modal("show");
+
+                    $.ajax({
+                        url: "api/stores/" + StoreId,
+                        method: "GET",
+                        success: function (data) {
+
+                            var storeData = JSON.parse(JSON.stringify(data));
+                            $("#StoreName").attr("placeholder", storeData.name);
+                            $("#StoreAddress").attr("placeholder", storeData.address);
+
+                            $("#editStoreSubmit").click(function () {
+                                var formdata = {
+                                    "name": $("#StoreName").val(),
+                                    "address": $("#StoreAddress").val()
+                                };
+                                $.ajax({
+                                    url: "/api/stores/" + StoreId,
+                                    method: "PUT",
+                                    data: JSON.stringify(formdata),
+                                    contentType: "application/json;charset=utf-8",
+                                    processData: true,
+                                    success: function () {
+                                        $("#editStoreModal").modal("hide");
+                                        location.reload(true);
+                                    },
+                                    error: function (xhr) {
+                                        alert(xhr.responseText);
+                                    }
+                                });
+                            });
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseText);
+                        }
+                    });
+                });
         });
-    });
-</script>
+    </script>
+}

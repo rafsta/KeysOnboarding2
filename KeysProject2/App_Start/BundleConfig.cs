@@ -8,9 +8,10 @@ namespace KeysProject2
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+            bundles.Add(new ScriptBundle("~/bundles/DataBundle").Include(
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/DataTables/DataTables.bootstrap4.js",
+                        "~/Scripts/DataTables/jquery.dataTables.js",
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

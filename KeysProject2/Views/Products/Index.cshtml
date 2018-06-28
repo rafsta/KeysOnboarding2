@@ -5,60 +5,52 @@
 
 <h2>Products</h2>
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newProductModal"
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModal"
         onclick="clearTextBox();">
     Add New Product
 </button><br /><br />
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">Products</h3>
-    </div>
-    <div class="panel-body">
-        <table id="ProductsTable" class="table table-striped table-bordered table-hover" width="100%">
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-            </tr>
-        </table>
-    </div>
-</div>
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newProductModal">
-    Add New Product
-</button>
+<table class="table table-light table-hover" id="ProductsTable">
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Action(Edit)</th>
+        <th>Action(Delete</th>
+    </tr>
+</table>
 
-<!-- Add new Product modal -->
-<div class="modal fade" id="newProductModal" tabindex="-1" role="dialog" aria-labelledby="newProductModalLabel" aria-hidden="true">
+@*Add Product modal*@
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newProductModalLabel">Add New Product</h5>
+                <h5 class="modal-title" id="productModalLabel">Add New Product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="newProductForm">
+                <form id="productForm">
                     <div class="form-group">
-                        <label for="NewProductName">Name</label>
-                        <input type="text" class="form-control" id="newProductName" placeholder="Please Enter Product Name">
+                        <label for="ProductName">Name</label>
+                        <input type="text" class="form-control" id="productName" placeholder="Please Enter Product Name">
                     </div>
                     <div class="form-group">
-                        <label for="newProductAddress">Price</label>
-                        <input type="text" class="form-control" id="newProductPrice" placeholder="Please Enter Product Price">
+                        <label for="ProductAddress">Price</label>
+                        <input type="text" class="form-control" id="productPrice" placeholder="Please Enter Product Price">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="newProductSubmit">Save</button>
+                <button type="button" class="btn btn-primary" id="productSubmit">Save</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Edit Product Modal -->
+@*Edit Product Modal*@
 <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -89,7 +81,7 @@
     </div>
 </div>
 
-<!-- Delete Product Confirmation Modal -->
+@*Delete Product Modal*@
 <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -110,121 +102,153 @@
     </div>
 </div>
 
-
-<script>
-    //Add dataTable
-    $(document).ready(function () {
-        $("#products").DataTable({
-            ajax: {
-                url: "api/products",
-                dataSrc: ""
-            },
-            columns: [
-                {
-                    data: "name"
+@section scripts
+{
+    <script>
+        //Add dataTable
+        $(document).ready(function () {
+            $("#ProductsTable").DataTable({
+                ajax: {
+                    url: "api/products",
+                    dataSrc: ""
                 },
-                {
-                    data: "price"
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return "<button class = 'btn btn-warning' id='editProductBtn' edit-Product-id=" + data + ">Edit</button>";
+                columns: [
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "price"
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class = 'btn btn-warning' id='editProductBtn' edit-Product-id=" +
+                                data +
+                                ">Edit</button>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class = 'btn btn-danger' id='deleteProductBtn' delete-Product-id=" +
+                                data +
+                                ">Delete</button>";
+                        }
                     }
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return "<button class = 'btn btn-danger' id='deleteProductBtn' delete-Product-id=" + data + ">Delete</button>";
-                    }
-                }
-            ]
-        });
-
-        //Add new Product
-        $("#newProductSubmit").click(function () {
-
-            var formdata = {
-                "name": $("#newProductName").val(),
-                "price": $("#newProductPrice").val()
-            };
-
-            $.ajax({
-                url: "api/products",
-                method: "POST",
-                data: JSON.stringify(formdata),
-                contentType: "application/json;charset=utf-8",
-                processData: true,
-                success: function () {
-                    $("#newProductModal").modal("hide");
-                    location.reload(true);
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                }
+                ]
             });
-        });
 
-        //Delete Product
-        $("#products").on("click", "#deleteProductBtn", function () {
+            //Add new Product
+            $("#productSubmit").click(function () {
 
-            var ProductId = $(this).attr("delete-Product-id");
-
-            $("#deleteProductModal").modal("show");
-
-            $("#deleteProductSubmit").click(function () {
+                var formdata = {
+                    "name": $("#productName").val(),
+                    "price": $("#productPrice").val()
+                };
 
                 $.ajax({
-                    url: "/api/products/" + ProductId,
-                    method: "DELETE",
+                    url: "api/products",
+                    method: "POST",
+                    data: JSON.stringify(formdata),
+                    contentType: "application/json;charset=utf-8",
+                    processData: true,
                     success: function () {
-                        $("#deleteProductModal").modal("hide");
+                        $("#productModal").modal("hide");
                         location.reload(true);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
                     }
                 });
             });
-        });
 
-        //Edit Product
-        $("#products").on("click", "#editProductBtn", function () {
-            var ProductId = $(this).attr("edit-Product-id");
+            //Delete Product
+            $("#products").on("click",
+                "#deleteProductBtn",
+                function () {
 
-            $("#editProductModal").modal("show");
+                    var ProductId = $(this).attr("delete-Product-id");
 
-            $.ajax({
-                url: "api/products/" + ProductId,
-                method: "GET",
-                success: function (data) {
+                    $("#deleteProductModal").modal("show");
 
-                    var productData = JSON.parse(JSON.stringify(data));
-                    $("#ProductName").attr("placeholder", productData.name);
-                    $("#ProductPrice").attr("placeholder", productData.price);
+                    $("#deleteProductSubmit").click(function () {
 
-                    $("#editProductSubmit").click(function () {
-                        var formdata = {
-                            "name": $("#ProductName").val(),
-                            "price": $("#ProductPrice").val()
-                        };
                         $.ajax({
-                            url: "/api/Products/" + ProductId,
-                            method: "PUT",
-                            data: JSON.stringify(formdata),
-                            contentType: "application/json;charset=utf-8",
-                            processData: true,
+                            url: "/api/products/" + ProductId,
+                            method: "DELETE",
                             success: function () {
-                                $("#editProductModal").modal("hide");
+                                $("#deleteProductModal").modal("hide");
                                 location.reload(true);
-                            },
-                            error: function (xhr) {
-                                alert(xhr.responseText);
                             }
                         });
                     });
+                });
+
+            //Edit Product
+            $("#products").on("click",
+                "#editProductBtn",
+                function () {
+                    var ProductId = $(this).attr("edit-Product-id");
+
+                    $("#editProductModal").modal("show");
+
+                    $.ajax({
+                        url: "api/products/" + ProductId,
+                        method: "GET",
+                        success: function (data) {
+
+                            var productData = JSON.parse(JSON.stringify(data));
+                            $("#ProductName").attr("placeholder", productData.name);
+                            $("#ProductPrice").attr("placeholder", productData.price);
+
+                            $("#editProductSubmit").click(function () {
+                                var formdata = {
+                                    "name": $("#ProductName").val(),
+                                    "price": $("#ProductPrice").val()
+                                };
+                                $.ajax({
+                                    url: "/api/Products/" + ProductId,
+                                    method: "PUT",
+                                    data: JSON.stringify(formdata),
+                                    contentType: "application/json;charset=utf-8",
+                                    processData: true,
+                                    success: function () {
+                                        $("#editProductModal").modal("hide");
+                                        location.reload(true);
+                                    },
+                                    error: function (xhr) {
+                                        alert(xhr.responseText);
+                                    }
+                                });
+                            });
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseText);
+                        }
+                    });
+                });
+
+            //Data annotation
+            $("#ProductsTable").validate({
+                rules: {
+                    Name: {
+                        required: true,
+                        minlength: 3
+                    },
+                    Price: {
+                        required: true
+                    }
                 },
-                error: function (xhr) {
-                    alert(xhr.responseText);
+                messages: {
+                    Name: {
+                        required: "Please provide a name.",
+                        minlength: "The name is too short."
+                    },
+                    Price: {
+                        required: "Please input a price."
+                    }
                 }
             });
         });
-    });
-</script>
+    </script>
+}

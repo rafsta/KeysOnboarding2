@@ -11,21 +11,17 @@
     Add Customer
 </button><br /><br />
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">Customers</h3>
-    </div>
-    <div class="panel-body">
-        <table id="CustomersTable" class="table table-striped table-bordered table-hover" width="100%">
-            <tr>
-                <th>Customer Name</th>
-                <th>Address</th>
-            </tr>
-        </table>
-    </div>
-</div>
+<table class="table table-light table-hover" id="CustomersTable">
+    <tr>
+        <th>Customer Name</th>
+        <th>Address</th>
+        <th>Action(Edit)</th>
+        <th>Action(Delete</th>
+    </tr>
+</table>
 
-<!-- Add customer modal -->
+
+@*Add customer modal*@
 <div class="modal fade" id="CustomerModal" tabindex="-1" role="dialog" aria-labelledby="CustomerModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -56,7 +52,7 @@
 </div>
 
 
-<!-- Edit Customer Modal -->
+@*Edit Customer Modal*@
 <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -87,7 +83,7 @@
     </div>
 </div>
 
-<!-- Delete Customer Confirmation Modal -->
+@*Delete Customer Modal*@
 <div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog" aria-labelledby="deleteCustomerModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -108,120 +104,131 @@
     </div>
 </div>
 
-<script>
-    //Add dataTable
-    $(document).ready(function () {
-        $("#customers").DataTable({
-            ajax: {
-                url: "api/customers",
-                dataSrc: ""
-            },
-            columns: [
-                {
-                    data: "name"
+@section scripts
+{
+    <script>
+        //Add dataTable
+        $(document).ready(function() {
+            $("#CustomersTable").DataTable({
+                ajax: {
+                    url: "api/customers",
+                    dataSrc: ""
                 },
-                {
-                    data: "address"
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return "<button class = 'btn btn-warning' id='editCustomerBtn' edit-customer-id=" + data + ">Edit</button>";
+                columns: [
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "address"
+                    },
+                    {
+                        data: "id",
+                        render: function(data) {
+                            return "<button class = 'btn btn-warning' id='editCustomerBtn' edit-customer-id=" +
+                                data +
+                                ">Edit</button>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function(data) {
+                            return "<button class = 'btn btn-danger' id='deleteCustomerBtn' delete-customer-id=" +
+                                data +
+                                ">Delete</button>";
+                        }
                     }
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return "<button class = 'btn btn-danger' id='deleteCustomerBtn' delete-customer-id=" + data + ">Delete</button>";
-                    }
-                }
-            ]
-        });
-
-        //Add new customer
-        $("#CustomerSubmit").click(function () {
-
-            var formdata = {
-                "name": $("#CustomerName").val(),
-                "address": $("#CustomerAddress").val()
-            };
-
-            $.ajax({
-                url: "api/customers",
-                method: "POST",
-                data: JSON.stringify(formdata),
-                contentType: "application/json;charset=utf-8",
-                processData: true,
-                success: function () {
-                    $("#CustomerModal").modal("hide");
-                    location.reload(true);
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                }
+                ]
             });
-        });
 
-        //Delete customer
-        $("#customers").on("click", "#deleteCustomerBtn", function () {
+            //Add new customer
+            $("#CustomerSubmit").click(function() {
 
-            var customerId = $(this).attr("delete-customer-id");
-
-            $("#deleteCustomerModal").modal("show");
-
-            $("#deleteCustomerSubmit").click(function () {
+                var formdata = {
+                    "name": $("#CustomerName").val(),
+                    "address": $("#CustomerAddress").val()
+                };
 
                 $.ajax({
-                    url: "/api/customers/" + customerId,
-                    method: "DELETE",
-                    success: function () {
-                        $("#deleteCustomerModal").modal("hide");
+                    url: "api/customers",
+                    method: "POST",
+                    data: JSON.stringify(formdata),
+                    contentType: "application/json;charset=utf-8",
+                    processData: true,
+                    success: function() {
+                        $("#CustomerModal").modal("hide");
                         location.reload(true);
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseText);
                     }
                 });
             });
-        });
 
-        //Edit customer
-        $("#customers").on("click", "#editCustomerBtn", function () {
-            var customerId = $(this).attr("edit-customer-id");
+            //Delete customer
+            $("#customers").on("click",
+                "#deleteCustomerBtn",
+                function() {
 
-            $("#editCustomerModal").modal("show");
+                    var customerId = $(this).attr("delete-customer-id");
 
-            $.ajax({
-                url: "api/customers/" + customerId,
-                method: "GET",
-                success: function (data) {
+                    $("#deleteCustomerModal").modal("show");
 
-                    var customerData = JSON.parse(JSON.stringify(data));
-                    $("#customerName").attr("placeholder", customerData.name);
-                    $("#customerAddress").attr("placeholder", customerData.address);
+                    $("#deleteCustomerSubmit").click(function() {
 
-                    $("#editCustomerSubmit").click(function () {
-                        var formdata = {
-                            "name": $("#customerName").val(),
-                            "address": $("#customerAddress").val()
-                        };
                         $.ajax({
                             url: "/api/customers/" + customerId,
-                            method: "PUT",
-                            data: JSON.stringify(formdata),
-                            contentType: "application/json;charset=utf-8",
-                            processData: true,
-                            success: function () {
-                                $("#editCustomerModal").modal("hide");
+                            method: "DELETE",
+                            success: function() {
+                                $("#deleteCustomerModal").modal("hide");
                                 location.reload(true);
-                            },
-                            error: function (xhr) {
-                                alert(xhr.responseText);
                             }
                         });
                     });
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                }
-            });
+                });
+
+            //Edit customer
+            $("#customers").on("click",
+                "#editCustomerBtn",
+                function() {
+                    var customerId = $(this).attr("edit-customer-id");
+
+                    $("#editCustomerModal").modal("show");
+
+                    $.ajax({
+                        url: "api/customers/" + customerId,
+                        method: "GET",
+                        success: function(data) {
+
+                            var customerData = JSON.parse(JSON.stringify(data));
+                            $("#customerName").attr("placeholder", customerData.name);
+                            $("#customerAddress").attr("placeholder", customerData.address);
+
+                            $("#editCustomerSubmit").click(function() {
+                                var formdata = {
+                                    "name": $("#customerName").val(),
+                                    "address": $("#customerAddress").val()
+                                };
+                                $.ajax({
+                                    url: "/api/customers/" + customerId,
+                                    method: "PUT",
+                                    data: JSON.stringify(formdata),
+                                    contentType: "application/json;charset=utf-8",
+                                    processData: true,
+                                    success: function() {
+                                        $("#editCustomerModal").modal("hide");
+                                        location.reload(true);
+                                    },
+                                    error: function(xhr) {
+                                        alert(xhr.responseText);
+                                    }
+                                });
+                            });
+                        },
+                        error: function(xhr) {
+                            alert(xhr.responseText);
+                        }
+                    });
+                });
         });
-    });
-</script>
+    </script>
+}
