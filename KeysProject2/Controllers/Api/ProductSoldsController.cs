@@ -9,110 +9,81 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using KeysProject2.Models;
+using KeysProject2.Controllers;
 
 namespace KeysProject2.Controllers.Api
 {
     public class ProductSoldsController : ApiController
     {
-        private MVC2Entities db = new MVC2Entities();
-
-        // GET: api/ProductSolds
-        public IQueryable<ProductSold> GetProductSolds()
+        private MVC2Entities db;
+        public ProductSoldsController()
         {
-            return db.ProductSolds;
+            db = new MVC2Entities();
         }
 
-        // GET: api/ProductSolds/5
-        [ResponseType(typeof(ProductSold))]
-        public IHttpActionResult GetProductSold(int id)
+        //GET api/sales
+        public IEnumerable<ProductSold> Getsales()
         {
-            ProductSold productSold = db.ProductSolds.Find(id);
+            var productSolds = db.ProductSolds.ToList();
+
+            return productSolds;
+        }
+
+        //GET api/sales/id
+        public ProductSold Getsales(int id)
+        {
+            var productSold = db.ProductSolds.SingleOrDefault(ps => ps.Id == id);
+
             if (productSold == null)
-            {
-                return NotFound();
-            }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            return Ok(productSold);
+            return productSold;
         }
 
-        // PUT: api/ProductSolds/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutProductSold(int id, ProductSold productSold)
+        //POST api/sales
+        [HttpPost]
+        public ProductSold CreateSales(ProductSold productSold)
         {
             if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != productSold.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(productSold).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductSoldExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/ProductSolds
-        [ResponseType(typeof(ProductSold))]
-        public IHttpActionResult PostProductSold(ProductSold productSold)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
             db.ProductSolds.Add(productSold);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = productSold.Id }, productSold);
+            return productSold;
         }
 
-        // DELETE: api/ProductSolds/5
-        [ResponseType(typeof(ProductSold))]
-        public IHttpActionResult DeleteProductSold(int id)
+        //PUT /api/sales/id
+        [HttpPut]
+        public void UpdateSales(int id, ProductSold productSold)
         {
-            ProductSold productSold = db.ProductSolds.Find(id);
-            if (productSold == null)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            db.ProductSolds.Remove(productSold);
+            var productSoldInDb = db.ProductSolds.SingleOrDefault(ps => ps.Id == id);
+
+            if (productSoldInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            productSoldInDb.DateSold = productSold.DateSold;
+            productSoldInDb.CustomerId = productSold.CustomerId;
+            productSoldInDb.ProductId = productSold.ProductId;
+            productSoldInDb.StoreId = productSold.StoreId;
+
             db.SaveChanges();
-
-            return Ok(productSold);
         }
 
-        protected override void Dispose(bool disposing)
+        //DELETE /api/sales/id
+        [HttpDelete]
+        public void DeleteSales(int id)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+            var productSoldInDb = db.ProductSolds.SingleOrDefault(c => c.Id == id);
 
-        private bool ProductSoldExists(int id)
-        {
-            return db.ProductSolds.Count(e => e.Id == id) > 0;
+            if (productSoldInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            db.ProductSolds.Remove(productSoldInDb);
+            db.SaveChanges();
         }
     }
 }

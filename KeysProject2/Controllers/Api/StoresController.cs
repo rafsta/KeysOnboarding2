@@ -14,105 +14,72 @@ namespace KeysProject2.Controllers.Api
 {
     public class StoresController : ApiController
     {
-        private MVC2Entities db = new MVC2Entities();
+        private MVC2Entities db;
 
-        // GET: api/Stores
-        public IQueryable<Store> GetStores()
+        public StoresController()
         {
-            return db.Stores;
+            db = new MVC2Entities();
         }
 
-        // GET: api/Stores/5
-        [ResponseType(typeof(Store))]
-        public IHttpActionResult GetStore(int id)
+        //GET api/stores
+        public IEnumerable<Store> GetStores()
         {
-            Store store = db.Stores.Find(id);
+            return db.Stores.ToList();
+        }
+
+        //GET api/stores/id
+        public Store GetStore(int id)
+        {
+            var store = db.Stores.SingleOrDefault(st => st.Id == id);
+
             if (store == null)
-            {
-                return NotFound();
-            }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            return Ok(store);
+            return store;
         }
 
-        // PUT: api/Stores/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutStore(int id, Store store)
+        //POST api/stores
+        [HttpPost]
+        public Store CreateStore(Store store)
         {
             if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != store.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(store).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StoreExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Stores
-        [ResponseType(typeof(Store))]
-        public IHttpActionResult PostStore(Store store)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
             db.Stores.Add(store);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = store.Id }, store);
+            return store;
         }
 
-        // DELETE: api/Stores/5
-        [ResponseType(typeof(Store))]
-        public IHttpActionResult DeleteStore(int id)
+        //PUT /api/stores/1
+        [HttpPut]
+        public void UpdateStore(int id, Store store)
         {
-            Store store = db.Stores.Find(id);
-            if (store == null)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            db.Stores.Remove(store);
+            var storeInDb = db.Stores.SingleOrDefault(c => c.Id == id);
+
+            if (storeInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            storeInDb.Name = store.Name;
+            storeInDb.Address = store.Address;
+
             db.SaveChanges();
-
-            return Ok(store);
         }
 
-        protected override void Dispose(bool disposing)
+        //DELETE /api/store/id
+        [HttpDelete]
+        public void DeleteStore(int id)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+            var storeInDb = db.Stores.SingleOrDefault(c => c.Id == id);
 
-        private bool StoreExists(int id)
-        {
-            return db.Stores.Count(e => e.Id == id) > 0;
+            if (storeInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            db.Stores.Remove(storeInDb);
+            db.SaveChanges();
         }
     }
 }

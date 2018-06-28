@@ -27,83 +27,64 @@ namespace KeysProject2.Controllers.Api
             return db.Products.ToList();
         }
 
-        // GET: api/Products/5
+        // GET: api/Products/id
         [ResponseType(typeof(Product))]
-        public IHttpActionResult GetProduct(int id)
+        public Product GetProduct(int id)
         {
-            Product product = db.Products.Find(id);
+            Product product = db.Products.SingleOrDefault(p => p.Id == id);
+
             if (product == null)
-            {
-                return NotFound();
-            }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            return Ok(product);
-        }
-
-        // PUT: api/Products/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutProduct(int id, Product product)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != product.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return product;
         }
 
         // POST: api/Products
+        [HttpPost]
         [ResponseType(typeof(Product))]
-        public IHttpActionResult PostProduct(Product product)
+        public Product CreateProduct(Product product)
         {
             if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
             db.Products.Add(product);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = product.Id }, product);
+            return product;
         }
 
-        // DELETE: api/Products/5
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult DeleteProduct(int id)
+
+        // PUT: api/Products/id
+        [HttpPut]
+        [ResponseType(typeof(void))]
+        public void PutProduct(int id, Product product)
         {
-            Product product = db.Products.Find(id);
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+
+            var productInDb = db.Products.SingleOrDefault(p => p.Id == id);
+
+            if (productInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            productInDb.Name = product.Name;
+            productInDb.Price = product.Price;
+
+            db.SaveChanges();
+        }
+
+
+        // DELETE: api/Products/5
+        [HttpDelete]
+        [ResponseType(typeof(Product))]
+        public void DeleteProduct(int id)
+        {
+            Product product = db.Products.SingleOrDefault(p => p.Id == id);
             if (product == null)
-            {
-                return NotFound();
-            }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
             db.Products.Remove(product);
             db.SaveChanges();
-
-            return Ok(product);
         }
 
         protected override void Dispose(bool disposing)

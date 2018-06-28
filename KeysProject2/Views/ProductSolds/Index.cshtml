@@ -6,3 +6,321 @@
 
 <h2>Index</h2>
 
+<button type="button" id="addNewProductSoldBtn" class="btn btn-primary" data-toggle="modal" data-target="#newProductSoldModal">
+    Add Sales Record
+</button>
+
+<table id="ProductSolds" class="table table-light table-hover">
+    <thead>
+    <tr>
+        <th>Customer Name</th>
+        <th>Product Name</th>
+        <th>Store Name</th>
+        <th>Date Sold</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+<!-- Add new sale record modal -->
+<div class="modal fade" id="newProductSoldModal" tabindex="-1" role="dialog" aria-labelledby="newProductSoldModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newProductSoldModalLabel">Add New Sales Record</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="newProductSoldForm">
+                    <div class="form-group">
+                        <label for="newProductSoldCustomerList">Customer Name</label>
+                        <select id="newProductSoldCustomerList" class="custom-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newProductSoldProductList">Product Name</label>
+                        <select id="newProductSoldProductList" class="custom-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newProductSoldStoreList">Store Name</label>
+                        <select id="newProductSoldStoreList" class="custom-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newProductSoldDate">Date Sold</label>
+                        <input id="newProductSoldDate" type="text" class="form-control" placeholder="YYYY-MM-DD">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="newProductSoldSubmit">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit ProductSold Modal -->
+<div class="modal fade" id="editProductSoldModal" tabindex="-1" role="dialog" aria-labelledby="editProductSoldModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductSoldModalLabel">Edit Sales Record</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Sales Record Details</h4>
+                <form id="editProductSoldForm">
+                    <div class="form-group">
+                        <label for="editProductSoldCustomerList">Customer Name</label>
+                        <select id="editProductSoldCustomerList" class="custom-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductSoldProductList">Product Name</label>
+                        <select id="editProductSoldProductList" class="custom-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductSoldStoreList">Store Name</label>
+                        <select id="editProductSoldStoreList" class="custom-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductSoldDate">Date Sold</label>
+                        <input id="editProductSoldDate" type="text" class="form-control">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editProductSoldSubmit">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete ProductSold Confirmation Modal -->
+<div class="modal fade" id="deleteProductSoldModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductSoldModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteProductSoldModalLabel">Delete Sales Record</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Do you want to delete this Sales Record?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" id="deleteProductSoldSubmit">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //Add dataTable
+    $(document).ready(function () {
+        $("#ProductSolds").DataTable({
+            ajax: {
+                url: "api/sales",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "customer.name"
+                },
+                {
+                    data: "product.name"
+                },
+                {
+                    data: "store.name"
+                },
+                {
+                    data: "dateSold",
+                    render: function (data) {
+                        return moment(data).format("DD/MM/YYYY");
+                    }
+                },
+                {
+                    data: "id",
+                    render: function (data) {
+                        return "<button class = 'btn btn-warning' id='editProductSoldBtn' edit-ProductSold-id=" + data + ">Edit</button>";
+                    }
+                },
+                {
+                    data: "id",
+                    render: function (data) {
+                        return "<button class = 'btn btn-danger' id='deleteProductSoldBtn' delete-ProductSold-id=" + data + ">Delete</button>";
+                    }
+                }
+            ]
+        });
+
+        //Populate new sales record modal
+        $("#addNewProductSoldBtn").click(function () {
+            $.ajax({
+                url: "api/customers",
+                method: "GET",
+                success: function (data) {
+                    var listCustomers = "<option value=''>Please select a customer</option>"
+                    $.each(data, function (key, customer) {
+                        listCustomers += "<option value='" + customer.id + "'>" + customer.name + "</option>"
+                    });
+                    $("#newProductSoldCustomerList").html(listCustomers);
+                }
+            });
+
+            $.ajax({
+                url: "api/products",
+                method: "GET",
+                success: function (data) {
+                    var listProducts = "<option value=''>Please select a product</option>"
+                    $.each(data, function (key, product) {
+                        listProducts += "<option value='" + product.id + "'>" + product.name + "</option>"
+                    });
+                    $("#newProductSoldProductList").html(listProducts);
+                }
+            });
+
+            $.ajax({
+                url: "api/stores",
+                method: "GET",
+                success: function (data) {
+                    var listStores = "<option value=''>Please select a store</option>"
+                    $.each(data, function (key, store) {
+                        listStores += "<option value='" + store.id + "'>" + store.name + "</option>"
+                    });
+                    $("#newProductSoldStoreList").html(listStores);
+                }
+            });
+
+            //Add new Sale Record
+            $("#newProductSoldSubmit").click(function () {
+                var formdata = {
+                    "customerId": $("#newProductSoldCustomerList").val(),
+                    "productId": $("#newProductSoldProductList").val(),
+                    "storeId": $("#newProductSoldStoreList").val(),
+                    "dateSold": $("#newProductSoldDate").val()
+                };
+                $.ajax({
+                    url: "api/sales",
+                    method: "POST",
+                    data: JSON.stringify(formdata),
+                    contentType: "application/json;charset=utf-8",
+                    processData: true,
+                    success: function () {
+                        $("#newProductSoldModal").modal("hide");
+                        location.reload(true);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            });
+        });
+
+        //Delete Sales Record
+        $("#ProductSolds").on("click", "#deleteProductSoldBtn", function () {
+
+            var ProductSoldId = $(this).attr("delete-ProductSold-id");
+
+            $("#deleteProductSoldModal").modal("show");
+
+            $("#deleteProductSoldSubmit").click(function () {
+
+                $.ajax({
+                    url: "/api/sales/" + ProductSoldId,
+                    method: "DELETE",
+                    success: function () {
+                        $("#deleteProductSoldModal").modal("hide");
+                        location.reload(true);
+                    }
+                });
+            });
+        });
+
+        //Edit Sales Record
+        $("#ProductSolds").on("click", "#editProductSoldBtn", function () {
+            var productSoldId = $(this).attr("edit-ProductSold-id");
+
+            $("#editProductSoldModal").modal("show");
+
+            //Populate Sales Record Details with dropdown menus using jQuery getJSON function
+            $.ajax({
+                url: "api/sales/" + productSoldId,
+                method: "GET",
+                success: function (data) {
+                    var selectedCustomerId = data.customerId;
+                    var selectedProductId = data.productId;
+                    var selectedStoreId = data.storeId;
+                    var listCustomers = "<option value ='" + selectedCustomerId + "'>" + data.customer.name + "</option>";
+                    var listProducts = "<option value ='" + selectedProductId + "'>" + data.product.name + "</option>";
+                    var listStores = "<option value ='" + selectedStoreId + "'>" + data.store.name + "</option>";
+
+                    $.getJSON("api/customers", function (data) {
+                        $.each(data, function (key, customer) {
+                            if (customer.id !== selectedCustomerId) {
+                                listCustomers += "<option value='" + customer.id + "'>" + customer.name + "</option>";
+                            }
+                        });
+                        $("#editProductSoldCustomerList").html(listCustomers);
+                    });
+
+                    $.getJSON("api/products", function (data) {
+                        $.each(data, function (key, product) {
+                            if (product.id !== selectedProductId) {
+                                listProducts += "<option value='" + product.id + "'>" + product.name + "</option>";
+                            }
+                        });
+                        $("#editProductSoldProductList").html(listProducts);
+                    });
+
+                    $.getJSON("api/stores", function (data) {
+                        $.each(data, function (key, store) {
+                            if (store.id !== selectedStoreId) {
+                                listStores += "<option value='" + store.id + "'>" + store.name + "</option>";
+                            }
+                        });
+                        $("#editProductSoldStoreList").html(listStores);
+                    });
+
+                    $("#editProductSoldDate").attr("placeholder", moment(data.dateSold).format("YYYY-MM-DD"));
+
+                    //Submit Edited Sales Record Form
+                    $("#editProductSoldSubmit").click(function () {
+                        var formdata = {
+                            "customerId": $("#editProductSoldCustomerList").val(),
+                            "productId": $("#editProductSoldProductList").val(),
+                            "storeId": $("#editProductSoldStoreList").val(),
+                            "dateSold": $("#editProductSoldDate").val()
+                        };
+
+                        $.ajax({
+                            url: "/api/sales/" + productSoldId,
+                            method: "PUT",
+                            data: JSON.stringify(formdata),
+                            contentType: "application/json;charset=utf-8",
+                            processData: true,
+                            success: function () {
+                                $("#editProductSoldModal").modal("hide");
+                                location.reload(true);
+                            },
+                            error: function (xhr) {
+                                alert(xhr.responseText);
+                            }
+                        });
+                    });
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>

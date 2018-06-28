@@ -8,25 +8,25 @@ namespace KeysProject2.Controllers
 {
     public class ProductSoldsController : Controller
     {
-        // GET: ProductSolds
+        // GET: sales
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: ProductSolds/Details/5
+        // GET: sales/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: ProductSolds/Create
+        // GET: sales/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ProductSolds/Create
+        // POST: sales/Create
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -42,13 +42,13 @@ namespace KeysProject2.Controllers
             }
         }
 
-        // GET: ProductSolds/Edit/5
+        // GET: sales/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: ProductSolds/Edit/5
+        // POST: sales/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -64,13 +64,13 @@ namespace KeysProject2.Controllers
             }
         }
 
-        // GET: ProductSolds/Delete/5
+        // GET: sales/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: ProductSolds/Delete/5
+        // POST: sales/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

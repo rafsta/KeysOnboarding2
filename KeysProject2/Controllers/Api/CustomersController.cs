@@ -14,105 +14,72 @@ namespace KeysProject2.Controllers.Api
 {
     public class CustomersController : ApiController
     {
-        private MVC2Entities db = new MVC2Entities();
+        private MVC2Entities db;
 
-        // GET: api/Customers
-        public IQueryable<Customer> GetCustomers()
+        public CustomersController()
         {
-            return db.Customers;
+            db = new MVC2Entities();
         }
 
-        // GET: api/Customers/5
-        [ResponseType(typeof(Customer))]
-        public IHttpActionResult GetCustomer(int id)
+        //GET api/customers
+        public IEnumerable<Customer> GetCustomers()
         {
-            Customer customer = db.Customers.Find(id);
+            return db.Customers.ToList();
+        }
+
+        //GET api/customers/id
+        public Customer GetCustomer(int id)
+        {
+            var customer = db.Customers.SingleOrDefault(c => c.Id == id);
+
             if (customer == null)
-            {
-                return NotFound();
-            }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            return Ok(customer);
+            return customer;
         }
 
-        // PUT: api/Customers/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutCustomer(int id, Customer customer)
+        //POST api/customers
+        [HttpPost]
+        public Customer CreateCustomer(Customer customer)
         {
             if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != customer.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(customer).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Customers
-        [ResponseType(typeof(Customer))]
-        public IHttpActionResult PostCustomer(Customer customer)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
             db.Customers.Add(customer);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = customer.Id }, customer);
+            return customer;
         }
 
-        // DELETE: api/Customers/5
-        [ResponseType(typeof(Customer))]
-        public IHttpActionResult DeleteCustomer(int id)
+        //PUT /api/customers/1
+        [HttpPut]
+        public void UpdateCustomer(int id, Customer customer)
         {
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            db.Customers.Remove(customer);
+            var customerInDb = db.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customerInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            customerInDb.Name = customer.Name;
+            customerInDb.Address = customer.Address;
+
             db.SaveChanges();
-
-            return Ok(customer);
         }
 
-        protected override void Dispose(bool disposing)
+        //DELETE /api/customer/id
+        [HttpDelete]
+        public void DeleteCustomer(int id)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+            var customerInDb = db.Customers.SingleOrDefault(c => c.Id == id);
 
-        private bool CustomerExists(int id)
-        {
-            return db.Customers.Count(e => e.Id == id) > 0;
+            if (customerInDb == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
+            db.Customers.Remove(customerInDb);
+            db.SaveChanges();
         }
     }
 }
