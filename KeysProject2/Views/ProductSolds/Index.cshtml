@@ -15,7 +15,7 @@
             <th>Store Name</th>
             <th>Date Sold</th>
             <th>Action(Edit)</th>
-            <th>Action(Delete</th>
+            <th>Action(Delete)</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -29,29 +29,10 @@
         //Add dataTable
         $(document).ready(function () {
             $("#ProductSoldsTable").DataTable({
-                ajax: {
-                    url: "api/productsolds",
-                    dataSrc: ""
-                },
-                columns: [
-                    {
-                        data: "customer.name"
-                    },
-                    {
-                        data: "product.name"
-                    },
-                    {
-                        data: "store.name"
-                    },
-                    {
-                        data: "dateSold",
-                        render: function (data) {
-                            return moment(data).format("DD/MM/YYYY");
-                        }
-                    },
-                    {
-                        data: "id",
-                        render: function (data) {
+                ajax: { url: "api/productsolds", dataSrc: "" }, columns:
+                [{ data: "customer.name"}, {data: "product.name" },{data: "store.name"},{data: "dateSold",render: function (data) {
+                            return moment(data).format("DD/MM/YYYY");}},
+                    {data: "id",render: function (data) {
                             return "<button class = 'btn btn-warning' id='editProductSoldBtn' edit-ProductSold-id=" +
                                 data +
                                 ">Edit</button>";
@@ -117,6 +98,7 @@
                         "storeId": $("#productSoldStoreList").val(),
                         "dateSold": $("#productSoldDate").val()
                     };
+
                     $.ajax({
                         url: "api/productsolds",
                         method: "POST",
@@ -135,7 +117,7 @@
             });
 
             //Delete Product Sold
-            $("#ProductSolds").on("click",
+            $("#ProductSoldsTable").on("click",
                 "#deleteProductSoldBtn",
                 function () {
 
@@ -157,7 +139,7 @@
                 });
 
             //Edit Product Sold
-            $("#ProductSolds").on("click",
+            $("#ProductSoldsTable").on("click",
                 "#editProductSoldBtn",
                 function () {
                     var productSoldId = $(this).attr("edit-ProductSold-id");
@@ -234,6 +216,7 @@
                                 });
 
                             $("#editProductSoldDate").attr("placeholder", moment(data.dateSold).format("YYYY-MM-DD"));
+                           
 
                             //Submit Edited Product Sold Form
                             $("#editProductSoldSubmit").click(function () {

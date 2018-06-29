@@ -10,8 +10,8 @@ namespace KeysProject2
         {
             bundles.Add(new ScriptBundle("~/bundles/DataBundle").Include(
                         "~/Scripts/bootstrap.js",
-                        "~/Scripts/DataTables/jquery.dataTables.js",
                         "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/DataTables/jquery.dataTables.js",
                         "~/Scripts/DataTables/DataTables.bootstrap4.js",
                         "~/Scripts/moment.js"
                         ));

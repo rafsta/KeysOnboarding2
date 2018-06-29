@@ -8,12 +8,14 @@
 @Html.Partial("_Modals")
 
 <table class="table table-light table-hover" id="ProductsTable">
+    <thead>
     <tr>
         <th>Name</th>
         <th>Price</th>
         <th>Action(Edit)</th>
-        <th>Action(Delete</th>
+        <th>Action(Delete)</th>
     </tr>
+    </thead>
     <tbody></tbody>
 </table>
 
@@ -21,33 +23,14 @@
 {
     <script>
         //Add dataTable
-        $(document).ready(function () {
-            $("#ProductsTable").DataTable({
-                ajax: {
-                    url: "api/products",
-                    dataSrc: ""
-                },
-                columns: [
-                    {
-                        data: "name"
-                    },
-                    {
-                        data: "price"
-                    },
-                    {
-                        data: "id",
-                        render: function (data) {
-                            return "<button class = 'btn btn-warning' id='editProductBtn' edit-Product-id=" +
-                                data +
-                                ">Edit</button>";
-                        }
-                    },
-                    {
-                        data: "id",
-                        render: function (data) {
-                            return "<button class = 'btn btn-danger' id='deleteProductBtn' delete-Product-id=" +
-                                data +
-                                ">Delete</button>";
+        $(document).ready(function () { $("#ProductsTable").DataTable({
+                ajax: {url: "api/products",dataSrc: ""},
+                columns: [{data: "name"}, {data: "price"},
+                    {data: "id",render: function (data) {
+                            return "<button class = 'btn btn-warning' id='editProductBtn' edit-Product-id=" + data + ">Edit</button>";
+                    } },
+                    {data: "id",render: function (data) {
+                            return "<button class = 'btn btn-danger' id='deleteProductBtn' delete-Product-id=" +data + ">Delete</button>";
                         }
                     }
                 ]
@@ -55,12 +38,10 @@
 
             //Add new Product
             $("#productSubmit").click(function () {
-
                 var formdata = {
                     "name": $("#productName").val(),
                     "price": $("#productPrice").val()
                 };
-
                 $.ajax({
                     url: "api/products",
                     method: "POST",
@@ -78,16 +59,12 @@
             });
 
             //Delete Product
-            $("#products").on("click",
+            $("#productsTable").on("click",
                 "#deleteProductBtn",
                 function () {
-
                     var ProductId = $(this).attr("delete-Product-id");
-
                     $("#deleteProductModal").modal("show");
-
                     $("#deleteProductSubmit").click(function () {
-
                         $.ajax({
                             url: "/api/products/" + ProductId,
                             method: "DELETE",
@@ -100,23 +77,19 @@
                 });
 
             //Edit Product
-            $("#products").on("click",
+            $("#productsTable").on("click",
                 "#editProductBtn",
-                function () {
+                function() {
                     var ProductId = $(this).attr("edit-Product-id");
-
                     $("#editProductModal").modal("show");
-
                     $.ajax({
                         url: "api/products/" + ProductId,
                         method: "GET",
-                        success: function (data) {
-
+                        success: function(data) {
                             var productData = JSON.parse(JSON.stringify(data));
                             $("#ProductName").attr("placeholder", productData.name);
                             $("#ProductPrice").attr("placeholder", productData.price);
-
-                            $("#editProductSubmit").click(function () {
+                            $("#editProductSubmit").click(function() {
                                 var formdata = {
                                     "name": $("#ProductName").val(),
                                     "price": $("#ProductPrice").val()
@@ -127,43 +100,21 @@
                                     data: JSON.stringify(formdata),
                                     contentType: "application/json;charset=utf-8",
                                     processData: true,
-                                    success: function () {
+                                    success: function() {
                                         $("#editProductModal").modal("hide");
                                         location.reload(true);
                                     },
-                                    error: function (xhr) {
+                                    error: function(xhr) {
                                         alert(xhr.responseText);
                                     }
                                 });
                             });
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             alert(xhr.responseText);
                         }
                     });
                 });
-
-            //Data annotation
-            $("#ProductsTable").validate({
-                rules: {
-                    Name: {
-                        required: true,
-                        minlength: 3
-                    },
-                    Price: {
-                        required: true
-                    }
-                },
-                messages: {
-                    Name: {
-                        required: "Please provide a name.",
-                        minlength: "The name is too short."
-                    },
-                    Price: {
-                        required: "Please input a price."
-                    }
-                }
-            });
         });
     </script>
 }

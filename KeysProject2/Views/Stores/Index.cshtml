@@ -13,7 +13,7 @@
             <th>Store Name</th>
             <th>Address</th>
             <th>Action(Edit)</th>
-            <th>Action(Delete</th>
+            <th>Action(Delete)</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -64,7 +64,7 @@
             });
 
             //Delete Store
-            $("#stores").on("click",
+            $("#storestable").on("click",
                 "#deleteStoreBtn",
                 function () {
 
@@ -86,7 +86,7 @@
                 });
 
             //Edit Store
-            $("#stores").on("click",
+            $("#storestable").on("click",
                 "#editStoreBtn",
                 function () {
                     var StoreId = $(this).attr("edit-Store-id");
