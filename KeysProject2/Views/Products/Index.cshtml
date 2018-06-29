@@ -77,8 +77,7 @@
                 });
 
             //Edit Product
-            $("#productsTable").on("click",
-                "#editProductBtn",
+            $("#productsTable").on("click","#editProductBtn",
                 function() {
                     var ProductId = $(this).attr("edit-Product-id");
                     $("#editProductModal").modal("show");
@@ -94,19 +93,12 @@
                                     "name": $("#ProductName").val(),
                                     "price": $("#ProductPrice").val()
                                 };
-                                $.ajax({
-                                    url: "/api/Products/" + ProductId,
-                                    method: "PUT",
-                                    data: JSON.stringify(formdata),
-                                    contentType: "application/json;charset=utf-8",
-                                    processData: true,
-                                    success: function() {
+                                $.ajax({url: "/api/Products/" + ProductId,method: "PUT",
+                                    data: JSON.stringify(formdata),contentType: "application/json;charset=utf-8",processData: true,success: function () {
                                         $("#editProductModal").modal("hide");
                                         location.reload(true);
                                     },
-                                    error: function(xhr) {
-                                        alert(xhr.responseText);
-                                    }
+                                    error: function(xhr) {alert(xhr.responseText);}
                                 });
                             });
                         },
