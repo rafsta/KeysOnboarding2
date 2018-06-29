@@ -1,9 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Keys 2 - Onboarding</title>
     @Styles.Render("~/Content/css")
@@ -15,9 +13,6 @@
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
             </button>
             @Html.ActionLink("Keys 2 - Onboarding", "Index", "Home", new {area = ""}, new {@class = "navbar-brand"})
         </div>
@@ -31,6 +26,7 @@
         </div>
     </div>
 </div>
+
 <div class="container body-content">
     @RenderBody()
     <hr/>
