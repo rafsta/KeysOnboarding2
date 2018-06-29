@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Stores";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -26,39 +25,23 @@
         //Add dataTable
         $(document).ready(function () {
             $("#storestable").DataTable({
-                ajax: {
-                    url: "api/Stores",
-                    dataSrc: ""
-                },
+                ajax: { url: "api/stores", dataSrc: "" },
                 columns: [
-                    {
-                        data: "name"
-                    },
-                    {
-                        data: "address"
-                    },
-                    {
-                        data: "id",
-                        render: function (data) {
+                        { data: "name" },
+                        { data: "address" },
+                        { data: "id",render: function (data) {
                             return "<button class = 'btn btn-warning' id='editStoreBtn' edit-Store-id=" +
-                                data +
-                                ">Edit</button>";
-                        }
-                    },
-                    {
-                        data: "id",
-                        render: function (data) {
+                                data + ">Edit</button>";}
+                        },
+                        { data: "id",render: function (data) {
                             return "<button class = 'btn btn-danger' id='deleteStoreBtn' delete-Store-id=" +
-                                data +
-                                ">Delete</button>";
+                                data + ">Delete</button>";}
                         }
-                    }
                 ]
             });
 
             //Add new Store
             $("#storeSubmit").click(function () {
-
                 var formdata = {
                     "name": $("#storeName").val(),
                     "address": $("#storeAddress").val()
