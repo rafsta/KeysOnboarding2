@@ -28,8 +28,6 @@
     </tbody>
 </table>
 
-
-
 @section scripts
 {
     <script>
@@ -262,7 +260,7 @@
             function changeDateFormat(date) {
                 var d = new Date(date.split("/").reverse().join("-"));
                                 var dd = d.getDate();
-                                var mm = d.getMonth() + 1;
+                                var mm = d.getMonth();
                                 var yy = d.getFullYear();
                                 var newDate = (yy + "/" + mm + "/" + dd);
                                 return newDate;

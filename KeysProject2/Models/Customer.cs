@@ -25,12 +25,12 @@ namespace KeysProject2.Models
         [Required]
         [RegularExpression("^[0-9]*$", ErrorMessage = "Id is not valid.")]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage ="You are required to input a name.")]
         [RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Customer name can only contain letters.")]
         [StringLength(10, MinimumLength = 3, ErrorMessage = "Customer name should be between 3 and 10 letters")]
         [DisplayName(displayName: "Customer Name")]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage ="You are required to state an address.")]
         [StringLength(maximumLength: 50, ErrorMessage = "Your address is too long.")]
         public string Address { get; set; }
 

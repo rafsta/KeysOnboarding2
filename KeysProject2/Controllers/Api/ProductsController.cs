@@ -15,7 +15,7 @@ namespace KeysProject2.Controllers.Api
 {
     public class ProductsController : ApiController
     {
-        private MVC2Entities db;
+        private readonly MVC2Entities db;
         public ProductsController()
         { 
             db = new MVC2Entities();

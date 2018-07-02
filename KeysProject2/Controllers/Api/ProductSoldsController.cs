@@ -15,7 +15,7 @@ namespace KeysProject2.Controllers.Api
 {
     public class ProductSoldsController : ApiController
     {
-        private MVC2Entities db;
+        private readonly MVC2Entities db;
         public ProductSoldsController()
         {
             db = new MVC2Entities();
@@ -84,6 +84,15 @@ namespace KeysProject2.Controllers.Api
 
             db.ProductSolds.Remove(productSoldInDb);
             db.SaveChanges();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
