@@ -30,6 +30,7 @@ namespace KeysProject2
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-datepicker.css",
                       "~/Content/DataTables/css/dataTables.bootstrap4.css",
                       "~/Content/font-awesome.min.css",
                       "~/Content/site.css"));

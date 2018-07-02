@@ -3,6 +3,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style type="text/css">
+    .datepicker {
+        z-index: 1151 !important;
+    }
+</style>
+
 <h2>Sales</h2>
 
 @Html.Partial("_Modals")
@@ -18,7 +24,8 @@
             <th>Action(Delete)</th>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+    </tbody>
 </table>
 
 
@@ -28,6 +35,11 @@
     <script>
         //Add dataTable
         $(document).ready(function () {
+            $('#datepicker').datepicker({
+                format: "dd/mm/yyyy",
+                autoclose: true
+            });       
+
             $("#ProductSoldsTable").DataTable({
                 ajax: { url: "api/productsolds", dataSrc: "" }, columns:
                 [{ data: "customer.name"}, {data: "product.name" },{data: "store.name"},{data: "dateSold",render: function (data) {
@@ -94,7 +106,7 @@
                         "customerId": $("#productSoldCustomerList").val(),
                         "productId": $("#productSoldProductList").val(),
                         "storeId": $("#productSoldStoreList").val(),
-                        "dateSold": $("#productSoldDate").val()
+                        "dateSold": changeDateFormat($("#productSoldDate").val())
                     };
 
                     $.ajax({
@@ -212,8 +224,8 @@
                                     $("#editProductSoldStoreList").html(listStores);
                                 });
 
-                            $("#editProductSoldDate").attr("placeholder", moment(data.dateSold).format("YYYY-MM-DD"));
-                           //Alt --- $("editProductSoldDate").datepicker({ format: ("YYYY/MM/DD") });
+                            $("#editProductSoldDate").attr("placeholder", moment(data.dateSold).format("DD/MM/YYYY"));
+                           //$("editProductSoldDate").datepicker({ format: ("YYYY/MM/DD") });
 
                             //Submit Edit Product Sold
                             $("#editProductSoldSubmit").click(function () {
@@ -221,7 +233,7 @@
                                     "customerId": $("#editProductSoldCustomerList").val(),
                                     "productId": $("#editProductSoldProductList").val(),
                                     "storeId": $("#editProductSoldStoreList").val(),
-                                    "dateSold": $("#editProductSoldDate").val()
+                                    "dateSold": changeDateFormat($("#editProductSoldDate").val())
                                 };
 
                                 $.ajax({
@@ -235,7 +247,7 @@
                                         location.reload(true);
                                     },
                                     error: function (xhr) {
-                                        alert(xhr.responseText);
+                                        $("#editProductSoldDate").attr("placeholder", "Your Input is Invalid.");
                                     }
                                 });
                             });
@@ -245,6 +257,16 @@
                         }
                     });
                 });
+
+            //Function to change format to YYYY/MM/DD
+            function changeDateFormat(date) {
+                var d = new Date(date.split("/").reverse().join("-"));
+                                var dd = d.getDate();
+                                var mm = d.getMonth() + 1;
+                                var yy = d.getFullYear();
+                                var newDate = (yy + "/" + mm + "/" + dd);
+                                return newDate;
+            }
         });
     </script>
 }
