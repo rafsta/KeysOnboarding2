@@ -30,6 +30,7 @@ namespace KeysProject2.Models
         [DisplayName(displayName: "Date Sold")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        [StringLength(8)]
         public string DateSold { get; set; }
 
         public virtual Customer Customer { get; set; }

@@ -34,28 +34,26 @@
                             return moment(data).format("DD/MM/YYYY");}},
                     {data: "id",render: function (data) {
                             return "<button class = 'btn btn-warning' id='editProductSoldBtn' edit-ProductSold-id=" +
-                                data +
-                                ">Edit</button>";
+                                data + ">Edit</button>";
                         }
                     },
                     {
                         data: "id",
                         render: function (data) {
                             return "<button class = 'btn btn-danger' id='deleteProductSoldBtn' delete-ProductSold-id=" +
-                                data +
-                                ">Delete</button>";
+                                data + ">Delete</button>";
                         }
                     }
                 ]
             });
 
-            //Populate product sold modal
+            //Load Product Sold
             $("#addproductSoldBtn").click(function () {
-                $.ajax({
+                $.ajax({ //Load Customers
                     url: "api/customers",
                     method: "GET",
                     success: function (data) {
-                        var listCustomers = "<option value=''>Please select a customer</option>"
+                        var listCustomers = "<option value=''>Please choose a customer</option>"
                         $.each(data,
                             function (id, customer) {
                                 listCustomers += "<option value='" + customer.id + "'>" + customer.name + "</option>"
@@ -64,11 +62,11 @@
                     }
                 });
 
-                $.ajax({
+                $.ajax({ //Load Products
                     url: "api/products",
                     method: "GET",
                     success: function (data) {
-                        var listProducts = "<option value=''>Please select a product</option>"
+                        var listProducts = "<option value=''>Please choose a product</option>"
                         $.each(data,
                             function (id, product) {
                                 listProducts += "<option value='" + product.id + "'>" + product.name + "</option>"
@@ -77,11 +75,11 @@
                     }
                 });
 
-                $.ajax({
+                $.ajax({ //Load Stores
                     url: "api/stores",
                     method: "GET",
                     success: function (data) {
-                        var listStores = "<option value=''>Please select a store</option>"
+                        var listStores = "<option value=''>Please choose a store</option>"
                         $.each(data,
                             function (id, store) {
                                 listStores += "<option value='" + store.id + "'>" + store.name + "</option>"
@@ -146,7 +144,6 @@
 
                     $("#editProductSoldModal").modal("show");
 
-                    //Populate Product Sold Details with dropdown menus using jQuery getJSON function
                     $.ajax({
                         url: "api/productsolds/" + productSoldId,
                         method: "GET",
@@ -169,7 +166,7 @@
                                 "'>" +
                                 data.store.name +
                                 "</option>";
-
+                            //Retrieve list of customers
                             $.getJSON("api/customers",
                                 function (data) {
                                     $.each(data,
@@ -184,7 +181,7 @@
                                         });
                                     $("#editProductSoldCustomerList").html(listCustomers);
                                 });
-
+                            //Retrieve list of products
                             $.getJSON("api/products",
                                 function (data) {
                                     $.each(data,
@@ -199,7 +196,7 @@
                                         });
                                     $("#editProductSoldProductList").html(listProducts);
                                 });
-
+                            //Retrieve list of stores
                             $.getJSON("api/stores",
                                 function (data) {
                                     $.each(data,
@@ -216,9 +213,9 @@
                                 });
 
                             $("#editProductSoldDate").attr("placeholder", moment(data.dateSold).format("YYYY-MM-DD"));
-                           
+                           //Alt --- $("editProductSoldDate").datepicker({ format: ("YYYY/MM/DD") });
 
-                            //Submit Edited Product Sold Form
+                            //Submit Edit Product Sold
                             $("#editProductSoldSubmit").click(function () {
                                 var formdata = {
                                     "customerId": $("#editProductSoldCustomerList").val(),

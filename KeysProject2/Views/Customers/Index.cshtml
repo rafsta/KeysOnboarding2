@@ -27,7 +27,10 @@
             $("#CustomersTable").DataTable({
                 ajax: { url: "api/customers",dataSrc: ""},
                 columns: [ { data: "name"},{data: "address" },
-                    { data: "id", render: function (data) {return "<button class = 'btn btn-warning' id='editCustomerBtn' edit-customer-id=" + data + ">Edit</button>";
+                    {
+                        data: "id", render: function (data)
+                        {
+                            return "<button class = 'btn btn-warning' id='editCustomerBtn' edit-customer-id=" + data + ">Edit</button>";
                     }},
                     {
                         data: "id",

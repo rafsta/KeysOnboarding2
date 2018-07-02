@@ -13,7 +13,8 @@ namespace KeysProject2
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/DataTables/jquery.dataTables.js",
                         "~/Scripts/DataTables/DataTables.bootstrap4.js",
-                        "~/Scripts/moment.js"
+                        "~/Scripts/moment.js",
+                        "~/Scripts/bootstrap-datepicker.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
